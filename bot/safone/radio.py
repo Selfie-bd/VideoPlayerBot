@@ -22,7 +22,7 @@ FFMPEG_PROCESSES = {}
 @Client.on_message(filters.command(["radio", f"radio@{USERNAME}"]) & filters.user(ADMINS) & (filters.chat(CHAT_ID) | filters.private))
 async def radio(client, m: Message):
     if 1 in STREAM:
-        await m.reply_text("🤖 **Please Stop The Existing Stream!**")
+        await m.reply_text("**Please Stop The Existing Stream!**")
         return
 
     if not ' ' in m.text:
@@ -32,7 +32,7 @@ async def radio(client, m: Message):
     text = m.text.split(' ', 1)
     query = text[1]
     input_filename = f'radio-{CHAT_ID}.raw'
-    msg = await m.reply_text("🔄 `Processing ...`")
+    msg = await m.reply_text("`Processing ...`")
 
     process = FFMPEG_PROCESSES.get(CHAT_ID)
     if process:
@@ -52,7 +52,7 @@ async def radio(client, m: Message):
                 ytstreamlink = f['url']
             station_stream_url = ytstreamlink
         except Exception as e:
-            await msg.edit(f"❌ **YouTube Download Error!** \n\n`{e}`")
+            await msg.edit(f"**YouTube Download Error!** \n\n`{e}`")
             print(e)
             return
     else:
@@ -69,15 +69,15 @@ async def radio(client, m: Message):
 
     if CHAT_ID in RADIO_CALL:
         await asyncio.sleep(1)
-        await msg.edit(f"📻 **Started [Radio Streaming]({query})!**", disable_web_page_preview=True)
+        await msg.edit(f"**Started [Radio Streaming]({query})!**", disable_web_page_preview=True)
     else:
-        await msg.edit("🔄 `Starting Radio Stream ...`")
+        await msg.edit(" `Starting Radio Stream ...`")
         await asyncio.sleep(2)
         try:
             group_call = group_call_factory.get_file_group_call(input_filename)
             await group_call.start(CHAT_ID)
             RADIO_CALL[CHAT_ID] = group_call
-            await msg.edit(f"📻 **Started [Radio Streaming]({query})!**", disable_web_page_preview=True)
+            await msg.edit(f"**Started [Radio Streaming]({query})!**", disable_web_page_preview=True)
             try:
                 STREAM.remove(0)
             except:
@@ -87,16 +87,16 @@ async def radio(client, m: Message):
             except:
                 pass
         except Exception as e:
-            await msg.edit(f"❌ **An Error Occoured!** \n\nError: `{e}`")
+            await msg.edit(f" **An Error Occoured!** \n\nError: `{e}`")
     
         
 @Client.on_message(filters.command(["stopradio", f"stopradio@{USERNAME}"]) & filters.user(ADMINS) & (filters.chat(CHAT_ID) | filters.private))
 async def stopradio(client, m: Message):
     if 0 in STREAM:
-        await m.reply_text("🤖 **Please Start An Stream First!**")
+        await m.reply_text(" **Please Start An Stream First!**")
         return
 
-    msg = await m.reply_text("🔄 `Processing ...`")
+    msg = await m.reply_text("`Processing ...`")
     process = FFMPEG_PROCESSES.get(CHAT_ID)
     if process:
         try:
@@ -108,7 +108,7 @@ async def stopradio(client, m: Message):
     if CHAT_ID in RADIO_CALL:
         await RADIO_CALL[CHAT_ID].stop()
         RADIO_CALL.pop(CHAT_ID)
-        await msg.edit("⏹️ **Stopped Radio Streaming!**")
+        await msg.edit(" **Stopped Radio Streaming!**")
         try:
             STREAM.remove(1)
         except:
@@ -118,4 +118,4 @@ async def stopradio(client, m: Message):
         except:
             pass
     else:
-        await msg.edit("🤖 **Please Start An Stream First!**")
+        await msg.edit(" **Please Start An Stream First!**")
